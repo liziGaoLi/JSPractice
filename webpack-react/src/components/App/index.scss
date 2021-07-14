@@ -1,0 +1,26 @@
+.App {
+  //width: 200px;
+  //height: 200px;
+  //line-height: 200px;
+  //transform: rotate(90deg);
+
+  .picture {
+    width: 200px;
+    //height: 200px;
+    border: 1px solid red;
+    margin-bottom: 50px;
+
+    img {
+      display: block;
+      width: 100%;
+    }
+  }
+
+  .back-picture {
+    width: 200px;
+    height: 200px;
+    border: 1px solid #000;
+    background: url("./one.png") no-repeat 0 0;
+    background-size: cover;
+  }
+}
