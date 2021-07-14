@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>单体设计模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>什么是单例</h3>
+  <div class="detail">保证一个类只有一个实例，并提供全局访问点。</div>
+</div>
+<script>
+
+  // 通过函数属性来实现
+  // function User() {
+  //   if (!(this instanceof User)) {
+  //     throw '调用函数的方式不对，必须通过 new 关键字调用';
+  //   }
+  //
+  //   if (!User.instance) {
+  //     User.instance = this;
+  //   }
+  //
+  //   return User.instance;
+  // }
+  //
+  // var user = new User();
+  // var user1 = new User();
+  // console.log('user === user1:', user === user1);
+
+  // 通过函数方法来实现
+  // function User() {
+  //   this.name = '测试'
+  // }
+  //
+  // User.getInstance = function() {
+  //   if (!User.instance) {
+  //     User.instance = new User();
+  //   }
+  //   return User.instance;
+  // }
+  //
+  // var user1 = User.getInstance();
+  // var user2 = User.getInstance();
+  //
+  // console.log('user1 === user2:', user1 === user2);
+
+  // 立刻执行的函数表达式方式
+  var User = (function() {
+    var instance;
+    function _user() {
+      this.name = 'name';
+    }
+
+    return function() {
+      if (!instance) {
+        instance = new _user();
+      }
+      return instance;
+    }
+  })()
+
+  function Foo() {
+    var num = 'num';
+    this.getNum = function() {
+      console.log('num:', num);
+    }
+  }
+
+  var foo = new Foo();
+  foo.getNum();
+
+</script>
+</body>
+</html>

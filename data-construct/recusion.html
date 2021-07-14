@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>递归</title>
+</head>
+<body>
+<script>
+  // 数字阶乘, 0的阶乘是1
+  // 1. 迭代方式
+  function factorialInteractive(num) {
+    if (typeof num !== 'number' || num < 0) return undefined;
+
+    let total = 1;
+    for(let i = num; i > 1; i--) {
+      total *= i;
+    }
+    return total;
+  }
+
+  // 2. 递归
+  function factorialRecursion(num) {
+    if (num === 0 || num === 1) {
+      return 1;
+    }
+    return num * factorialRecursion(num - 1);
+  }
+
+  let a = factorialInteractive(10);
+  let b = factorialRecursion(10);
+  console.log('a:', a);
+  console.log('b:', b);
+
+  // 裴波那契数 0,1,1,2,3,5,8,13,21,34.....
+  // 1. 迭代
+  function fibonacciInteractive(n) {
+    if (n < 1) return 0;
+    if (n <= 2) return 1;
+
+    let fibNMinus1 = 0;
+    let fibNMinus2 = 1;
+    let fibB = 2;
+
+    for (let i = 2; i <= n; i++) {
+      fibB = fibNMinus1 + fibNMinus2;
+      fibNMinus1 = fibNMinus2;
+      fibNMinus2 = fibB;
+    }
+    return fibB;
+  }
+
+  function fibonacciRecursion(n) {
+    if (n < 1) return 0;
+    if (n <= 2) return 1;
+
+    return fibonacciRecursion(n - 1) + fibonacciRecursion(n - 2);
+  }
+
+  let c = fibonacciInteractive(10);
+  let d = fibonacciRecursion(10);
+  console.log('c:', c);
+  console.log('d:', d);
+
+  function fibonacciMemoization(n) {
+    const memo = [0, 1];
+    const fibonacci = (n) => {
+      if (memo[n] != null) return memo[n];
+      return memo[n] = fibonacci(n -1, memo) + fibonacci(n -2, memo);
+    };
+    return fibonacci;
+  }
+</script>
+</body>
+</html>

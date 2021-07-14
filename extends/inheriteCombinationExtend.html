@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>寄生组合式继承</title>
+</head>
+<body>
+<div class="content">
+  <h3>寄生组合式继承</h3>
+  <div class="detail">是寄生式继承和构造函数式继承的配合使用，</div>
+</div>
+<script>
+  var SuperClass = function(bookList) {
+    this.bookList = bookList;
+  }
+  SuperClass.prototype.getBookList = function() {
+    return this.bookList;
+  }
+
+  var ChildClass = function(bookList, type) {
+    SuperClass.call(this, bookList);
+    this.type = type;
+  }
+
+  var inheritProtoType = function(subClass, superClass) {
+    subClass.prototype = Object.create(superClass.prototype);
+    subClass.prototype.constructor = subClass;
+  }
+
+  inheritProtoType(ChildClass, SuperClass);
+
+  ChildClass.prototype.getBookType = function() {
+    return this.bookType;
+  }
+
+  var instance = new ChildClass(['CSS', 'HTML', 'JavaScript'], '前端');
+  console.log('instance:', instance);
+</script>
+</body>
+</html>

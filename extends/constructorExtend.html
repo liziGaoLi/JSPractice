@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>构造函数式继承</title>
+</head>
+<body>
+<div class="content">
+  <h3>构造函数式继承</h3>
+  <div class="detail">就是在子类中调用父类</div>
+</div>
+<script>
+  var SuperClass = function(bookList) {
+    this.bookList = bookList;
+  }
+  SuperClass.prototype.getBookList = function() {
+    return this.bookList;
+  }
+
+  var ChildClass = function(bookList, type) {
+    SuperClass.call(this, bookList);
+    this.type = type;
+  }
+  ChildClass.prototype.getBookType = function() {
+    return this.bookType;
+  }
+
+  var instance = new ChildClass(['CSS', 'HTML', 'JavaScript'], '前端');
+  console.log('instance:', instance);
+
+</script>
+</body>
+</html>

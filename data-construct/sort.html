@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>排序</title>
+</head>
+<body>
+<h3>冒泡排序：</h3>
+<p>比较所有相邻的两个元素的大小，如果第一个元素大于第二个元素则交换这两个元素的位置。使用双循环实现。</p>
+
+<h3>2. 选择排序：</h3>
+<p>找出数组中的最小值，放在数组中的第一个位置，找出数组中第二小的值，放在数组中的第二个位置，以此类推...</p>
+<p>找出最小值所在的索引，与数组中的第一个元素交换位置，依次类推...</p>
+
+<h3>3. 插入排序</h3>
+<p>将第二个元素和第一个元素进行排列，将第三个元素和前两个元素进行排序，将第四个元素和前三个元素进行排序，以此类推</p>
+<p>适合小型数组</p>
+
+<h3>4. 归并排序</h3>
+
+<h3>5. 快速排序</h3>
+<p>1. 选取中间值作为主元（pivot)</p>
+<p>2. 划分操作：选取最左边的索引作为左指针，最右边的索引作为右指针。移动左指针知道找到一个比主元大的值，在移动右指针，知道找到一个比主元小的值，然后交换他们，
+直到左侧的指针超过右侧的指针，这个过程中是的，左指针前面的值都小于左指针以及左指针后面的值。</p>
+<p>3. 对划分后的两个数组进行上面两个步骤操作，直到数组已经完全排序</p>
+
+<script>
+  const COMPARE = {
+    LESS_THAN: '-1',
+    EQUALITY: '0',
+    BIGGER_THAN: '1'
+  }
+
+  const defaultCompareFn = (a, b) => {
+    if (a > b) {
+      return COMPARE.BIGGER_THAN;
+    }
+    else if (a === b) {
+      return COMPARE.EQUALITY;
+    }
+    else {
+      return COMPARE.LESS_THAN;
+    }
+  }
+  // 1. 冒泡排序
+  const bubbleSort = (array, compareFn = defaultCompareFn) => {
+    if (!Array.isArray(array)) return false;
+
+    let len = array.length;
+    for (let i = 0; i < len; i++) {
+      for (let j = 0; j < len-i-1; j++) {
+        if (compareFn(array[j], array[j + 1]) === COMPARE.BIGGER_THAN) {
+          [array[j], array[j + 1]] = [array[j + 1], array[j]];
+        }
+      }
+    }
+    return array;
+  }
+
+  console.log('bubbleSort:', bubbleSort([5, 6, 2, 4, 5, 7, 1, 12, 19, 0, 45, 8]));
+
+  // 2. 选择排序
+  const selectionSort = (array, compareFn = defaultCompareFn) => {
+    if (!Array.isArray(array)) return false;
+
+    const { length: len } = array;
+    for (let i = 0; i < len; i++) {
+      let minIndex = i;
+      for (let j = i; j < len; j++) {
+        if (compareFn(array[minIndex], array[j]) === COMPARE.BIGGER_THAN) {
+          minIndex = j;
+        }
+      }
+      if (minIndex !== i) {
+        [array[i], array[minIndex]] = [array[minIndex], array[i]];
+      }
+    }
+    return array;
+  }
+  console.log('selectionSort:', selectionSort([5, 6, 2, 4, 5, 7, 1, 12, 19, 0, 45, 8]));
+
+  // 3. 插入排序
+  const insertionSort = (array, compareFn = defaultCompareFn) => {
+    if (!Array.isArray(array)) return false;
+
+    const { length: len } = array;
+    for (let i = 1; i < len; i++) {
+      let j = i;
+      const temp = array[i];
+      while (j > 0 && compareFn(array[j - 1], temp) === COMPARE.BIGGER_THAN) {
+        array[j] = array[j - 1];
+        j--;
+      }
+      array[j] = temp;
+    }
+    return array;
+  }
+  console.log('insertionSort:', insertionSort([5, 6, 2, 4, 5, 7, 1, 12, 19, 0, 45, 8]));
+
+  // 4. 归并排序
+  const merge = (left, right, compareFn = defaultCompareFn) => {
+    let i = 0;
+    let j = 0;
+    const result = [];
+    while(i < left.length && j < right.length) {
+      result.push(
+        compareFn(left[i], right[j]) === COMPARE.BIGGER_THAN ?
+          right[j++] :
+          left[i++]
+      )
+    }
+    return result.concat(i >= left.length ? right.slice(j) : left.slice(i));
+  }
+
+  const mergeSort = (array, compareFn = defaultCompareFn) => {
+    if (!Array.isArray(array)) return [];
+    const { length: len } = array;
+    if (len > 1) {
+      const middle = Math.floor(len / 2);
+      const left = mergeSort(array.slice(0, middle), compareFn);
+      const right = mergeSort(array.slice(middle, len), compareFn);
+      array = merge(left, right, compareFn);
+    }
+    return array;
+  }
+  console.log('mergeSort:', mergeSort([5, 6, 2, 4, 5, 7, 1, 12, 19, 0, 45, 8]));
+
+  // 5. 快速排序
+  function quickSort(array, compareFn = defaultCompareFn) {
+    if (!Array.isArray(array)) return false;
+
+    return quick(array, 0, array.length - 1, compareFn);
+  }
+
+  function quick(array, left, right, compareFn = defaultCompareFn) {
+    if (array.length > 1) {
+      const index = partition(array, left, right, compareFn);
+      if (left < index - 1) {
+        array = quick(array, left, index - 1, compareFn);
+      }
+      if (index < right) {
+        array = quick(array, index, right, compareFn);
+      }
+    }
+    return array;
+  }
+
+  function partition(array, left, right, compareFn) {
+    const pivot = array[Math.floor((left + right) / 2)];
+    let i = left;
+    let j = right;
+    while (i <= j) {
+      while (compareFn(array[i], pivot) === COMPARE.LESS_THAN) {
+        i++;
+      }
+      while(compareFn(array[j], pivot) === COMPARE.BIGGER_THAN) {
+        j--;
+      }
+      if (i <= j) {
+        [array[i], array[j]] = [array[j], array[i]];
+        i++;
+        j--;
+      }
+    }
+    return i;
+  }
+  console.log('quickSort:', quickSort([5, 6, 2, 4, 5, 7, 1, 12, 19, 0, 45, 8]));
+
+  // 6. 计数排序
+  function countingSort(array) {
+    if (!Array.isArray(array)) return false;
+    if (array.length < 2) return array;
+
+    const maxValue = findMaxValue(array);
+    const counts = new Array(maxValue + 1);
+    array.forEach(element => {
+      if (!counts[element]) {
+        counts[element] = 0;
+      }
+      counts[element]++;
+    });
+
+    let sortIndex = 0;
+    counts.forEach((count, i) => {
+      while (count > 0) {
+        array[sortIndex++] = i;
+        count--;
+      }
+    })
+    return array;
+  }
+  function findMaxValue(array) {
+    let maxValue = array[0];
+    for (let i = 1; i < array.length; i++) {
+      if (array[i] > maxValue) maxValue = array[i];
+    }
+    return maxValue;
+  }
+
+  console.log('countingSort:', countingSort([5, 6, 2, 4, 5, 7, 1, 12, 19, 0, 45, 8]));
+
+
+  function bucketSort(array) {
+    if (array.length < 2) return array;
+    const buckets = createBuckets(array, 3);
+    return sortBuckets(buckets);
+  }
+
+  function sortBuckets(buckets) {
+    const sortedArray = [];
+    for (let i = 0; i < buckets.length; i++) {
+      if (buckets[i] != null) {
+        insertionSort(buckets[i]);
+        sortedArray.push(...buckets[i]);
+      }
+    }
+    return sortedArray;
+  }
+
+  function createBuckets(array, bucketSize = 3) {
+    const { length } = array;
+    if (array.length < 2) return array;
+
+    let minValue = array[0];
+    let maxValue = array[0];
+
+    for (let i = 1; i < length; i++) {
+      if (array[i] < minValue) minValue = array[i];
+      if (array[i] > maxValue) maxValue = array[i];
+    }
+
+    const buckets = [];
+    const bucketCount = Math.floor((maxValue - minValue) / bucketSize) + 1;
+    for (let i = 0; i < bucketCount; i++) {
+      buckets[i] = [];
+    }
+
+    for (let i = 0; i < length; i++) {
+      const bucketIndex = Math.floor((array[i] - minValue) / bucketSize);
+      buckets[bucketIndex].push(array[i]);
+    }
+
+    return buckets;
+  }
+
+  console.log('bucketSort:', bucketSort([5, 6, 2, 4, 5, 7, 1, 12, 19, 0, 45, 8]));
+
+</script>
+</body>
+</html>

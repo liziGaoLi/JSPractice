@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>迷宫老鼠问题</title>
+</head>
+<body>
+
+<script>
+  function rateInAMaze(maze) {
+    const solution = [];
+    // 创建保存老鼠路径的二维数组
+    for (let i = 0; i < maze.length; i++) {
+      solution[i] = [];
+      for (let j = 0; j < maze[i].length; j++) {
+        solution[i][j] = 0;
+      }
+    }
+
+    if (findPath(maze, 0, 0, solution) === true) {
+      return solution;
+    }
+
+    return -1;
+  }
+
+  function findPath(maze, x, y, solution) {
+    const n = maze.length;
+    const m = maze[0].length;
+    // 到达终点
+    if (x === n - 1 && y === m - 1) {
+      solution[x][y] = 1;
+      return true;
+    }
+
+    if (isSafe(maze, x, y)) {
+      solution[x][y] = 1;
+      // 判断下一个垂直位置能否移动
+      if (findPath(maze, x + 1, y, solution)) {
+        return true;
+      }
+      // 判断下一个水平位置能否移动
+      if (findPath(maze, x, y + 1, solution)) {
+        return true;
+      }
+
+      solution[x][y] = 0;
+      return false;
+    }
+
+    return false;
+  }
+  // 判断位置是否为空闲
+  function isSafe(maze, x, y) {
+    return x >=0 && y >= 0 && x < maze.length && y < maze[0].length && maze[x][y] !== 0;
+  }
+
+  const maze = [
+    [1, 0, 0, 0],
+    [1, 1, 1, 1],
+    [0, 0, 1, 0],
+    [0, 1, 1, 1]
+  ]
+
+  console.log('rateInAMaze:', rateInAMaze(maze));
+
+</script>
+
+</body>
+</html>

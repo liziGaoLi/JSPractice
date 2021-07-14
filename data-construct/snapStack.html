@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>背包问题</title>
+</head>
+<body>
+
+<script>
+
+  function snapStack(capacity, weights, values, n) {
+    const ks = [];
+    for (let i = 0; i <= n; i++) {
+      ks[i] = [];
+    }
+
+    for (let i = 0; i <= n; i++) {
+      for (let j = 0; j <= capacity; j++) {
+        if (i === 0 || j === 0) {
+          ks[i][j] = {
+            value: 0,
+            goods: []
+          };
+        }
+        else if (weights[i - 1] <= j) {
+          // 上一个物品在当前容量下的最优对象
+          const preDot = ks[i -1][j - weights[i - 1]];
+          const a = values[i - 1] + preDot.value;
+          const b = ks[i - 1][j].value;
+          ks[i][j] = a > b ? {value: a, goods: [...preDot.goods, i - 1]} : b;
+        }
+        else {
+          ks[i][j] = ks[i - 1][j];
+        }
+      }
+    }
+
+    return ks[n][capacity];
+  }
+  console.log('snapStack', snapStack(5, [1, 2, 3], [2, 3, 4], 3))
+
+  function snapStackRecursive(capacity, weight, values) {
+    const cache = {};
+
+    const makeStack = (c) => {
+      if (c <= 0) return {value: 0, goods: []};
+      if (cache[c]) return cache[c];
+
+      let min = {value: 0, goods: []};
+      let newMin;
+      for (let i = 0; i < weight.length; i++) {
+        const w = weight[i];
+        const newAmount = c - w;
+        if (newAmount >= 0) {
+          newMin = makeStack(newAmount);
+        }
+        if (
+          newAmount >= 0 &&
+          (newMin.value <= min.value || !min.value) &&
+          (newMin.value > 0 || !newAmount)
+        ) {
+          min = {value: newMin.value + values[i], goods: [...newMin.goods, w]}
+        }
+      }
+      return cache[c] = min;
+    }
+
+    return makeStack(capacity)
+  }
+
+  console.log('snapStackRecursive', snapStackRecursive(5, [1, 2, 3], [2, 3, 4]))
+</script>
+
+</body>
+</html>

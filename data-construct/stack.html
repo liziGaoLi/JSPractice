@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>栈</title>
+</head>
+<body>
+<div class="content">
+  <h3>栈</h3>
+  <div class="detail">
+    栈是一种遵循后进先出原则的有序集合，新添加或者待删除的元素都位于栈顶，另一端叫做栈底。新元素都靠近栈顶，旧元素都接近栈底。
+  </div>
+</div>
+
+<script>
+
+  let _items = Symbol('items');
+  class StackArr {
+    constructor() {
+      this[_items] = [];
+    }
+
+    push(element) {
+      this[_items].push(element);
+    }
+
+    pop() {
+      return this[_items].pop();
+    }
+
+    peek() {
+      return this[_items][this.size() - 1];
+    }
+
+    size() {
+      return this[_items].length;
+    }
+
+    isEmpty() {
+      return this.size() === 0;
+    }
+
+    clear() {
+      this[_items] = [];
+    }
+  }
+
+  var stackArr = new StackArr();
+  var symbols = Object.getOwnPropertySymbols(stackArr);
+  console.log('symbols:', symbols);
+  stackArr.push('Alice');
+  console.log('stackArr:', stackArr);
+
+  class StackObj {
+    constructor() {
+      this.items = {};
+      this.count = 0;
+    }
+
+    push(element) {
+      this.items[this.count] = element;
+      this.count++;
+    }
+
+    pop() {
+      if (this.isEmpty()) return undefined;
+
+      this.count--;
+      let val = this.items[this.count];
+      delete this.items[this.count];
+      return val;
+    }
+
+    peek() {
+      if (this.isEmpty()) return undefined;
+      return this.items[this.count - 1];
+    }
+
+    isEmpty() {
+      return this.count === 0;
+    }
+
+    clear() {
+      this.items = {};
+      this.count = 0;
+    }
+
+    size() {
+      return this.count;
+    }
+
+    toString() {
+      if (this.isEmpty()) return '';
+
+      var stackString = this.items[0];
+      for (let i = 1; i < this.count; i++) {
+        stackString = `${stackString}, ${this.items[i]}`;
+      }
+      return stackString;
+    }
+  }
+
+  var stackObj = new StackObj();
+  stackObj.push('Alice');
+  console.log('stackObj:', stackObj);
+  console.log('peek:', stackObj.peek());
+  console.log('size:', stackObj.size());
+  console.log('isEmpty:', stackObj.isEmpty());
+  console.log('toString:', stackObj.toString());
+  stackObj.clear()
+  console.log('clear:', stackObj);
+
+
+
+</script>
+</body>
+</html>

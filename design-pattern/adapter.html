@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>适配器模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>适配器模式</h3>
+  <div class="detail">
+    两个软件实体之间的接口数据格式不匹配，就可以使用适配器来做数据格式转换。
+  </div>
+</div>
+<script>
+  // 渲染数据，格式限制为数组了
+  function renderData(data) {
+    data.forEach(function(item) {
+      console.log(item);
+    });
+  }
+
+  // 对非数组的进行转换适配
+  function arrayAdapter(data) {
+    if (typeof data !== 'object') {
+      return [];
+    }
+
+    if (Object.prototype.toString.call(data) === '[object Array]') {
+      return data;
+    }
+
+    var temp = [];
+
+    for (var item in data) {
+      if (data.hasOwnProperty(item)) {
+        temp.push(data[item]);
+      }
+    }
+
+    return temp;
+  }
+
+  var data = {
+    0: 'A',
+    1: 'B',
+    2: 'C'
+  };
+
+  renderData(arrayAdapter(data)); // A B C
+</script>
+</body>
+</html>

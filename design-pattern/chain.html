@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>职责链模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>职责链模式</h3>
+  <div class="detail">
+    节点为请求的处理对象的链表数据结构，从初始节点对请求进行处理，如果该节点可以处理这个请求，<br>
+    就是使用该节点的对象进行处理，如果处理不了就使用下一个节点处理请求，一次类推。
+  </div>
+</div>
+<script>
+  var ChainItem = function(fn) {
+    this.fn = fn;
+    this.next = null;
+  }
+
+  ChainItem.prototype = {
+    constructor: ChainItem,
+    // 设置下一个节点
+    setNext: function(nextChain) {
+      this.next = nextChain;
+      return this.next;
+    },
+    // 处理请求
+    start: function() {
+      this.fn.apply(this, arguments);
+    },
+    toNext: function() {
+      if (this.next) {
+        this.next.start.apply(this.next, arguments);
+      }
+      else {
+        return {flag: false, msg: '请求未处理'}
+      }
+    }
+  }
+
+  var operateNumber = function(num) {
+    if (typeof num === 'number') {
+      console.log('operateNumber', num);
+    }
+    else {
+      this.toNext(num);
+    }
+  }
+
+  var operateString = function(str) {
+    if (typeof str === 'string') {
+      console.log('operateString', str);
+    }
+    else {
+      this.toNext(str);
+    }
+  }
+
+  var chainItemNumber = new ChainItem(operateNumber);
+  var chainItemString = new ChainItem(operateString);
+  chainItemNumber.setNext(chainItemString);
+  chainItemNumber.start('90');
+</script>
+</body>
+</html>

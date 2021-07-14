@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>组合模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>组合模式</h3>
+  <div class="detail">
+    <h4>应用场景：</h4>
+    <p>1. 存在有层次结构的对象。</p>
+    <p>2. 要操纵这批对象或者其中的部分对象。</p>
+    <h4>特点：</h4>
+    <p>1. 组合模式中有两种对象：</p>
+    <div class="p-con">
+      1.1. 组合对象，有叶子对象或者聚合了叶子对象的组合对象聚合而成。<br>
+      1.2. 叶子对象，最底层的目标对象。
+    </div>
+    <p>2. 通过调用组合对象的方法，隐式调用叶子对象的方法来实现某个功能。</p>
+    <p>3. 组合对象和叶子对象要实现同一批接口。</p>
+  </div>
+
+  <div class="example">
+    <h1>公司</h1>
+    <h2>-->北京分公司</h2>
+    <h3>-->财务部</h3>
+    <p>
+      -->张1 <br>
+      -->张2 <br>
+      -->张3 <br>
+    </p>
+    <h3>-->销售部</h3>
+    <p>
+      -->张4<br>
+      -->张5<br>
+      -->张6<br>
+    </p>
+    <h2>-->长沙分公司</h2>
+    <h3>-->财务部</h3>
+    <p>
+      -->张7<br>
+      -->张8<br>
+      -->张9<br>
+    </p>
+    <h3>-->销售部</h3>
+    <p>
+      -->张10<br>
+      -->张11<br>
+      -->张12<br>
+    </p>
+
+
+  </div>
+</div>
+<script>
+  var Composite = function(name) {
+    this.name = name;
+    this.type = 'composite';
+    this.children = [];
+  }
+
+  Composite.prototype = {
+    constructor: Composite,
+    // 添加叶子对象
+    addChild: function(child) {
+      this.children.push(child);
+      return this;
+    },
+    getChild: function (name) {
+      if (name === undefined) throw new Error('getChild 方法需要传递参数。');
+
+      var elements = [];
+
+      var getEle = function(item) {
+        if (item.type === 'leaf') {
+          item.name === name && elements.push(item);
+        }
+        else {
+          item.children.forEach(getEle);
+        }
+      }
+
+      this.children.forEach(getEle);
+
+      return elements;
+    }
+  }
+
+  var Leaf = function(name) {
+    this.name = name;
+    this.type = 'leaf';
+  }
+
+  Leaf.prototype = {
+    constructor: Leaf,
+    getChild: function(name) {},
+    addChild: function (name) {
+      return false;
+    }
+  }
+
+  var composite = new Composite('公司');
+  composite
+    .addChild(
+      new Composite('北京分公司')
+        .addChild(new Leaf('赵五'))
+        .addChild(new Leaf('秦六'))
+    )
+    .addChild(
+      new Composite('长沙分公司')
+        .addChild(new Leaf('张三'))
+        .addChild(new Leaf('李四'))
+    )
+    .addChild(new Leaf('张三'))
+
+  console.log(composite);
+  console.log('getChild:', composite.getChild('张三'))
+</script>
+</body>
+</html>

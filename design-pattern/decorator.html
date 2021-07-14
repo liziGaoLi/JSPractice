@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>装饰者模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>装饰者模式</h3>
+  <div class="detail">
+    再不改变对象原有功能的基础上，在程序运行过程中给对象动态添加新功能。
+  </div>
+</div>
+<script>
+  function Person() {}
+
+  Person.prototype.skill = function() {
+    console.log('数学');
+  }
+
+  function MusicDecorator(person) {
+    this.person = person;
+  }
+
+  MusicDecorator.prototype.skill = function() {
+    this.person.skill();
+    console.log('音乐');
+  }
+
+  function SportDecorator(person) {
+    this.person = person;
+  }
+
+  SportDecorator.prototype.skill = function() {
+    this.person.skill();
+    console.log('运动');
+  }
+
+  var person = new Person();
+  var musicDecorator = new MusicDecorator(person);
+  console.log('musicDecorator:', musicDecorator.skill());
+  var sportDecorator = new SportDecorator(musicDecorator);
+  console.log('sportDecorator:', sportDecorator.skill());
+
+</script>
+</body>
+</html>

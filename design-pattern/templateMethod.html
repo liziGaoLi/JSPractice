@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>模板方法模式 </title>
+</head>
+<body>
+<div class="content">
+  <h3>模板方法模式</h3>
+  <p>抽象父类管理公共方法，子类继承并重写抽象父类的方法。</p>
+</div>
+<script>
+  // 父类
+  var Interview = function() {};
+
+  Interview.prototype = {
+    constructor: Interview,
+    // 算法架构
+    init: function(){
+      console.log('开始面试');
+      this.writtenTest();
+      this.technicalInterview();
+      this.leader();
+      this.waitNotice();
+    },
+    // 笔试
+    writtenTest: function() {
+      console.log('笔试');
+    },
+    // 技术面试
+    technicalInterview: function() {
+      console.log('技术面试');
+    },
+    // 领导或者HR面试
+    leader: function() {
+      console.log('领导面试');
+    },
+    // 等通知
+    waitNotice: function() {
+      console.log('等通知');
+    }
+  }
+
+  // 百度面试流程
+  var BaiDuInterview = function() {}
+  BaiDuInterview.prototype = Object.create(Interview.prototype);
+  BaiDuInterview.prototype.writtenTest = function() {
+    console.log('百度——笔试');
+  }
+  BaiDuInterview.prototype.technicalInterview = function() {
+    console.log('百度——技术面试');
+  }
+  BaiDuInterview.prototype.leader = function () {
+    console.log('百度——领导面试');
+  }
+  BaiDuInterview.prototype.waitNotice = function() {
+    console.log('百度——等通知');
+  }
+
+  var baiDuInterview = new BaiDuInterview();
+  baiDuInterview.init();
+
+</script>
+</body>
+</html>

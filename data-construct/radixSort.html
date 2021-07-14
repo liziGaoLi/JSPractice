@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>基数排列</title>
+</head>
+<body>
+1. 基于每个有效位上的数组进行计数排序，和计数排序不同的地方在于，索引是有效位上的数字，值是有效数字出现的次数。<br/>
+2. 对临时数组中的值，进行累计处理，当前值变成当前值加上上一个值，使每个有效数字出现的次数基于上个有效数字做累计。<br>
+3. 每次对数组进行排序时，先获取有效数字，在临时数组中获取累计处理后的值作为索引，对数组进行排序。
+
+<script>
+  function radixSort(array, radix = 10) {
+    if (array.length < 2) return array;
+
+    let minValue = array[0];
+    let maxValue = array[0];
+    let sign = 1;
+
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] < minValue) minValue = array[i];
+      if (array[i] > maxValue) maxValue = array[i];
+    }
+
+    while (Math.floor((maxValue - minValue) / sign) >= 1) {
+      array = countingRadixSort(array, sign, minValue, radix);
+      sign *= radix;
+    }
+
+    return array;
+  }
+
+  function countingRadixSort(array, sign, minValue = 0, radix = 10) {
+    let bucketIndex;
+    // 保存计数的临时数据
+    const buckets = [];
+    const aux = [];
+    for (let i = 0; i < radix; i++) {
+      buckets[i] = 0;
+    }
+
+    for (let i = 0; i < array.length; i++) {
+      bucketIndex = Math.floor((array[i] - minValue) / sign) % radix;
+      buckets[bucketIndex]++;
+    }
+
+    // 累计处理
+    for (let i = 1; i < radix; i++) {
+      buckets[i] += buckets[i - 1];
+    }
+
+    for (let i = array.length - 1; i >= 0; i--) {
+      bucketIndex = Math.floor((array[i] - minValue) / sign) % radix;
+      aux[--buckets[bucketIndex]] = array[i];
+    }
+
+    for (let i = 0; i < aux.length; i++) {
+      array[i] = aux[i];
+    }
+    return array;
+  }
+
+  console.log('radixSort:', radixSort([5, 65, 28, 455, 51, 7558, 10, 12, 190, 45, 8]));
+
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>享元模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>享元模式：</h3>
+  <div class="detail">享元模式是一种优化设计模式，目标是尽量减少相似对象的数量。</div>
+  <div class="detail">
+    找出对象的公共部分，通过修改对象的属性而不是重新创建相似对象来实现功能。
+  </div>
+</div>
+<script>
+  var Fitness = function(sex) {
+    this.sex = sex;
+  }
+
+  // 工厂模式-根据性别不同创建不同的对象
+  var FitnessFactory = {
+    objs: {},
+    create: function(sex) {
+
+      if (!this.objs[sex]) {
+        this.objs[sex] = new Fitness(sex);
+      }
+
+      return this.objs[sex];
+    }
+  }
+
+  // 管理器，显示数据添加，以及对象数据更新
+  var FitnessManager = {
+    fitnessData: {},
+    add: function(name, sex, age, height, weight) {
+      var fitness = FitnessFactory.create(sex);
+
+      this.fitnessData[name] = {
+        name: name,
+        age: age,
+        height: height,
+        weight: weight
+      }
+
+      return fitness;
+    },
+
+    updateFitnessData: function(name, obj) {
+      var fitnessData = this.fitnessData[name];
+
+      for (var item in fitnessData) {
+        if (fitnessData.hasOwnProperty(item)) {
+          obj[item] = fitnessData[item];
+        }
+      }
+    }
+  }
+
+  Fitness.prototype.judge = function(name) {
+    FitnessManager.updateFitnessData(name, this);
+
+    var result = name + ':';
+    if (this.sex === 'male') {
+      result += this.maleJudge();
+    }
+    else {
+      result += this.femaleJudge();
+    }
+
+    console.log(result);
+    return result;
+  }
+
+  Fitness.prototype.maleJudge = function() {
+    return '男性测试结果';
+  }
+
+  Fitness.prototype.femaleJudge = function() {
+    return '女性测试结果';
+  }
+
+  // 测试
+  var a = FitnessManager.add('张三', 'male', 20, 180, 180);
+  var b = FitnessManager.add('李四', 'male', 20, 180, 180);
+  var c = FitnessManager.add('王五', 'female', 20, 180, 180);
+
+  a.judge('张三')
+  console.log('a:', a);
+  b.judge('李四')
+  console.log('b:', b);
+  c.judge('王五')
+  console.log('c:', c);
+</script>
+</body>
+</html>

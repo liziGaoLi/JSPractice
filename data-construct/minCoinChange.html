@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>最小硬币找零</title>
+</head>
+<body>
+<h3>最小问题找零：</h3>
+<p>采取分而治之的方式实现功能。</p>
+<p>将大问题划分成小问题，通过解决小问题，进而解决大问题。</p>
+<p>0. 创建缓存变量对象，保存小问题的解决方案</p>
+<p>1. 找到金额数是1时，找零的最佳方案。</p>
+<p>2. 找到金额数是2时，找零的最佳方案。</p>
+<p>3. 找到金额数是3时，找零的最佳方案。</p>
+<p>4. ...</p>
+
+<script>
+  function minCoinChange(coins, amount) {
+    const cache = [];
+
+    const makeChange = (value) => {
+      if (!value) return [];
+      if (cache[value]) return cache[value];
+
+      // value的找零方案
+      let min = [];
+      // value - 1 的找零方案
+      let newMin;
+      for (let i = 0; i < coins.length; i++) {
+        const coin = coins[i];
+        const newAmount = value - coin;
+        if (newAmount >= 0) {
+          newMin = makeChange(newAmount);
+        }
+        if (
+          newAmount >= 0 &&
+          (newMin.length < min.length - 1 || !min.length) &&
+          (newMin.length || !newAmount)
+        ) {
+          min = [coin].concat(newMin);
+        }
+      }
+      return cache[value] = min;
+    }
+
+    return makeChange(amount);
+  }
+
+  console.log('minCoinChange', minCoinChange([1, 3, 5], 32));
+
+</script>
+
+
+</body>
+</html>

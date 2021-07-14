@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>代理模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>代理模式：</h3>
+  <div class="detail">
+    为目标对象增加一个代理对象，通过代理对象控制对目标对象的访问。<br/>
+    原则：代理对象和目标对象的接口要具有一致性。以保证在不使用代理对象的情况下，能够直接使用目标对象。
+  </div>
+</div>
+<script>
+// 目标对象
+var You = function() {};
+You.prototype.visit = function(identify) {
+  console.log('identify:', identify);
+  return { isAccepted: true };
+}
+
+// 代理对象，如果拜访人的名字是张三，不允许进入
+// 否则，需要征求住户意见，以便确定是否允许访问者进入
+var Guard = function() {}
+Guard.prototype.visit = function (identify) {
+
+  if (identify.name === '张三') {
+    console.log(`不许${identify.name}进入`);
+  }
+  else {
+    var res = new You().visit(identify);
+    if (res.isAccepted) {
+      console.log(`允许${identify.name}进入`);
+    }
+    else {
+      console.log(`不许${identify.name}进入`);
+    }
+  }
+}
+
+new Guard().visit({name: '李四'});
+new Guard().visit({name: '张三'});
+
+var imageTarget = (function() {
+  var imgEle = document.createElement('img');
+  document.body.appendChild(imgEle);
+
+  return {
+    setSrc: function(src) {
+      imgEle.src = src;
+    }
+  }
+})();
+
+var proxy = (function() {
+  var image = new Image();
+
+  image.onload = function() {
+    var _this = this;
+    setTimeout(function() {
+      imageTarget.setSrc(_this.src);
+    }, 500);
+  }
+
+  return {
+    setSrc: function(src) {
+      imageTarget.setSrc('./one.png');
+      image.src = src;
+    }
+  }
+})();
+
+// proxy.setSrc('http://...');
+
+// 静态缓存代理
+// 计算所有参数的乘积
+var mult = function() {
+  var result = 1;
+  for (var i = 0; i < arguments.length; i++) {
+    result *= arguments[i];
+  }
+
+  return result;
+}
+
+// 代理对象
+var multProxy = (function() {
+  var cache = {};
+
+  return {
+    mult: function() {
+      var key = Array.prototype.join.call(arguments, ',');
+      if (key in cache) {
+        return cache[key];
+      }
+      return cache[key] = mult.apply(this, arguments);
+    }
+  }
+})();
+
+console.log(multProxy.mult(1, 2, 4, 5, 6)); // 240
+
+
+
+// 动态缓存代理
+// 计算所有参数的和
+var plus = function() {
+  var result = 1;
+  for (var i = 0; i < arguments.length; i++) {
+    result += arguments[i];
+  }
+
+  return result;
+}
+
+// 代理对象工厂
+var proxyFactory = function(fn) {
+  var cache = {};
+
+  return function() {
+    var key = Array.prototype.join.call(arguments, ',');
+    if (key in cache) {
+      return cache[key];
+    }
+    return cache[key] = fn.apply(this, arguments);
+  }
+}
+
+var multPro = proxyFactory(mult);
+var plusPro = proxyFactory(plus);
+
+console.log(multPro(1, 2, 4, 5, 6)); // 240
+console.log(plusPro(1, 2, 4, 5, 6)); // 19
+
+</script>
+</body>
+</html>

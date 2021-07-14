@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>map</title>
+</head>
+<body>
+<h3>字典</h3>
+1. set(key, value) 向字典中添加新元素，如果key已经存在，原来的值会被覆盖。<br>
+2. remove(key) 删除字典中的元素。<br>
+3. get(key)  获取字典中的元素。<br>
+4. size() 获取元素个数。<br>
+5. hasKey(key) 是否包含某个键。<br>
+6. clear() 清空字典。<br>
+7. keys() 获取所有键。<br>
+8. values() 获取所有值。<br>
+9. keyValues() 返回所有[key, value]。<br>
+10. isEmpty() 字段是否为空。<br>
+11. forEach(callback) callback参数是key, value。<br>
+
+<script>
+
+  function defaultToStringFn (item) {
+    if (item === undefined) {
+      return 'UNDEFINED';
+    }
+    else if (item === null) {
+      return 'NULL';
+    }
+    else if (typeof item === 'string' || item instanceof String) {
+      return item;
+    }
+    else {
+      return item.toString();
+    }
+  }
+
+  class ValuePair {
+    constructor(key, value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    toString() {
+      return `[${this.key}, ${this.value}]`
+    }
+  }
+
+  class Dictionary {
+    constructor(toStringFn = defaultToStringFn) {
+      this.toStringFn = toStringFn;
+      this.items = {};
+    }
+
+    // 添加新元素
+    set(key, value) {
+      if (key !== null && value !== null) {
+        const tableKey = this.toStringFn(key)
+        this.items[tableKey] = new ValuePair(key, value);
+        return true;
+      }
+      return false;
+    }
+    // 根据key获取元素
+    get(key) {
+      if (this.hasKey(key)) {
+        return this.items[this.toStringFn(key)].value;
+      }
+      return undefined
+    }
+    // 删除元素
+    remove(key) {
+      if (this.hasKey(key)) {
+        const keyStr = this.toStringFn(key)
+        const result = this.items[keyStr];
+        delete this.items[keyStr]
+        return result;
+      }
+      return undefined;
+    }
+    // 获取全部key
+    keys() {
+      return Object.keys(this.items).map(key => this.items[key].key);
+    }
+    // 获取全部value
+    values() {
+      return Object.keys(this.items).map(key => this.items[key].value);
+    }
+    // 判断字典中是否包含key
+    hasKey(key) {
+      const element = this.items[this.toStringFn(key)];
+      return element !== undefined && element !== null;
+    }
+    // 返回[[key1, value1], [key2, value2]]
+    keyValues() {
+      return Object.keys(this.items).map(key => Object.values(this.items[key]));
+    }
+    // 获取元素数量
+    size() {
+      return Object.keys(this.items).length;
+    }
+    // 判断字典否为空
+    isEmpty() {
+      return this.size() === 0;
+    }
+    // 清空字典
+    clear() {
+      this.items = {};
+    }
+    // 遍历字典
+    forEach(callback) {
+      Object.keys(this.items).forEach(key => {
+        callback(...Object.values(this.items[key]));
+      })
+    }
+  }
+
+
+  let dictionary = new Dictionary();
+
+  dictionary.set('alice', 'Alice');
+  dictionary.set('bob', 'Bob');
+  dictionary.set('jack', 'Jack');
+  dictionary.remove('bob')
+
+  console.log('keyValues:', dictionary.keyValues());
+  console.log('keys:', dictionary.keys());
+  console.log('values:', dictionary.values());
+  console.log('get:', dictionary.get('jack'));
+  console.log('isEmpty:', dictionary.isEmpty());
+  console.log('size:', dictionary.size());
+
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>最长公共子序列</title>
+</head>
+<body>
+<script>
+
+  function lcs(wordX, wordY) {
+    const x = wordX.length;
+    const y = wordY.length;
+    const l = [];
+
+    for (let i = 0; i <= x; i++) {
+      l[i] = [];
+      for (let j = 0; j <= y; j++) {
+        l[i][j] = {
+          len: 0,
+          chars: []
+        };
+      }
+    }
+
+    for (let i = 0; i <= x; i++) {
+      for (let j = 0; j <= y; j++) {
+        if (i === 0 || j === 0) {
+          l[i][j] = {
+            len: 0,
+            chars: []
+          };
+        }
+        else if (wordX[i - 1] === wordY[j - 1]) {
+          const prev = l[i - 1][j - 1];
+          l[i][j] = {
+            len: prev.len + 1,
+            chars: [...prev.chars, wordX[i - 1]]
+          }
+        }
+        else {
+          const a = l[i - 1][j];
+          const b = l[i][j - 1];
+          l[i][j] = a.len > b.len ? a : b;
+        }
+      }
+    }
+    return l[x][y];
+  }
+console.log('lcs:', lcs('acbaed', 'abcadf'))
+</script>
+</body>
+</html>

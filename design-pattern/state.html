@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>状态模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>状态模式：</h3>
+  <div class="detail">
+    通过对象的内部状态来控制对象的行为，对象的内部状态通常被封装成一个类，影响对象的行为也被封装在这个类中。
+  </div>
+</div>
+<script>
+  function Work(name) {
+    this.name = name;
+    this.currentState = null;
+
+    // 状态
+    this.wakeUpState = new WakeUpState(this);
+    this.energeticState = new EnergeticState(this);
+    this.tiredState = new TiredState(this);
+
+    this.init();
+  }
+
+  Work.prototype.init = function() {
+    this.currentState = this.wakeUpState;
+    var _this = this;
+    document.body.onclick = function() {
+      _this.currentState.behavior();
+    }
+  }
+
+  Work.prototype.setState = function(state) {
+    this.currentState = state;
+    state.behavior();
+  }
+
+  function WakeUpState(work) {
+    this.work = work;
+  }
+
+  WakeUpState.prototype.behavior = function() {
+    console.log(this.work.name + ': 刚刚睡醒。');
+
+    setTimeout(function() {
+      this.work.setState(this.work.energeticState);
+    }.bind(this), 1000);
+  }
+
+  function EnergeticState(work) {
+    this.work = work;
+  }
+
+  EnergeticState.prototype.behavior = function() {
+    console.log(this.work.name + ': 尽力充沛。');
+
+    setTimeout(function() {
+      this.work.setState(this.work.tiredState);
+    }.bind(this), 1000);
+  }
+
+  function TiredState(work) {
+    this.work = work;
+  }
+
+  TiredState.prototype.behavior = function() {
+    console.log(this.work.name + ': 太累了。');
+  }
+
+  new Work('gaoli');
+</script>
+</body>
+</html>

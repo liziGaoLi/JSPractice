@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>中介者模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>中介者模式：</h3>
+  <div class="detail">
+    多个对象通过中介者对象来实现某个功能，实现对象之间的解耦。例如React使用的Redux，Vue使用的Vuex。
+  </div>
+</div>
+<script>
+  // 中介者，计算分数排名
+  var rankScore = function(person) {
+    return [A.score, B.score].sort(function(a, b) {
+      return b - a;
+    });
+  }
+
+  var A = {
+    score: 0,
+    changeTo: function(score) {
+      this.score = score;
+      return rankScore(A);
+    }
+  }
+
+  var B = {
+    score: 0,
+    changeTo: function(score) {
+      this.score = score;
+      return rankScore(B);
+    }
+  }
+
+  console.log(A.changeTo(100));
+  console.log(B.changeTo(200));
+
+</script>
+</body>
+</html>

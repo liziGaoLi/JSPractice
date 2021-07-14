@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>设计模式-工厂模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>设计模式：</h3>
+  <div class="detail">设计模式是一种解决某个问题的方案，是一种由前人设计并经过实践的解决问题的思路，能够提供代码的复用性和可维护性。</div>
+  <h3>设计原则：</h3>
+  <div class="detail">
+    1. 单一职责原则；<br/>
+    2. 开放封闭原则；
+  </div>
+  <h3>工厂模式：</h3>
+  <div class="detail">
+    工厂模式分为：简单工厂模式、工厂方法模式、抽象工厂模式。
+    <h4>1. 简单工厂模式</h4>
+    <div class="detail">根据传入的参数，生产属性值不同的同类产品。</div>
+    <h4>2. 工厂方法模式</h4>
+    <div class="detail">根据传入的产品类型不同，生产不同类型的产品</div>
+    <h4>3. 抽象工厂模式</h4>
+    <div class="detail">
+      <p>根据传入的子类和父类类型，继承了父类的子类</p>
+      <p>父类是定义在工厂中的，子类时传入到工厂中的参数，而子类有根据某个类型划分。</p>
+    </div>
+
+  </div>
+  <script>
+    // 简单工厂模式
+    function simpleFactory(options) {
+      var obj = new Object();
+      obj.name = options.name;
+      obj.roleId = options.roleId;
+      obj.viewPages = options.viewPages || [];
+      return obj;
+    }
+    // 简单工厂模式-测试
+    var user = simpleFactory({
+      name: '管理员',
+      roleId: 'Uu0183795',
+      viewPages: ['首页', '菜单管理', '用户管理']
+    });
+    console.log('用户：', user);
+
+    // 工厂方法模式
+    function ComplexFactory() {}
+    ComplexFactory.prototype.make = function(type, options) {
+      if (this instanceof ComplexFactory && this[type]) {
+        var func = this[type];
+        func.prototype = Object.create(ComplexFactory.prototype);
+        return new func(options);
+      }
+      else {
+        throw '不能创建类型为' + type + '的实例';
+      }
+    }
+
+    ComplexFactory.prototype.extend = function(obj) {
+      Object.keys(obj).forEach(key => {
+        this[key] = obj[key];
+      })
+    }
+
+    ComplexFactory.prototype.getViewPages = function() {
+      return this.viewPages;
+    }
+
+    ComplexFactory.prototype.setState = function(callback) {
+      callback.call(this);
+    }
+
+    ComplexFactory.prototype.extend({
+      superAdmin: function(options) {
+        this.name = options.name;
+        this.roleId = options.roleId;
+        this.viewPages = options.viewPages || [];
+      },
+      admin: function(options) {
+        this.name = options.name;
+        this.roleId = options.roleId;
+        this.viewPages = options.viewPages || [];
+      },
+      user: function(options) {
+        this.name = options.name;
+        this.roleId = options.roleId;
+        this.viewPages = options.viewPages || [];
+      },
+    })
+    var factory = new ComplexFactory();
+    var admin = factory.make('admin', {
+      name: '管理员',
+      roleId: 'Uu0183795',
+      viewPages: ['首页', '菜单管理', '用户管理']
+    });
+
+    console.log('admin:', admin);
+    console.log(admin.getViewPages());
+
+    admin.setState(function() {
+      this.viewPages = [...this.viewPages, '权限管理'];
+    });
+
+    console.log('viewPages:', admin.viewPages);
+
+    var superAdmin = factory.make('superAdmin', {
+      name: '超级管理员',
+      roleId: 'U00000000',
+      viewPages: ['首页', '菜单管理', '用户管理', '机构管理']
+    });
+
+    console.log('superAdmin', superAdmin);
+
+    function AbstractFactory(subClass, superType) {
+      if (typeof AbstractFactory[superType] === 'function') {
+        var superClass = AbstractFactory[superType];
+        subClass.prototype = new superClass();
+        subClass.prototype.constructor = subClass;
+      }
+    }
+
+    AbstractFactory.superAdmin = function() {
+      this.type = 'superAdmin';
+    }
+
+    AbstractFactory.admin = function() {
+      this.type = 'admin';
+    }
+
+    AbstractFactory.user = function () {
+      this.type = 'user';
+    }
+
+    function SuperAdmin(options) {
+      this.name = options.name;
+      this.roleId = options.roleId;
+      this.viewPages = options.viewPages || [];
+    }
+
+    function Admin(options) {
+      this.name = options.name;
+      this.roleId = options.roleId;
+      this.viewPages = options.viewPages || [];
+    }
+
+    function User(options) {
+      this.name = options.name;
+      this.roleId = options.roleId;
+      this.viewPages = options.viewPages || [];
+    }
+
+    // 测试
+    AbstractFactory(SuperAdmin, 'superAdmin');
+
+    var superAdminAbs = new SuperAdmin({
+      name: '超级管理员',
+      roleId: 'U00000000',
+      viewPages: ['首页', '菜单管理', '用户管理', '机构管理']
+    });
+
+    console.log('superAdminAbs:', superAdminAbs);
+
+  </script>
+</div>
+</body>
+</html>

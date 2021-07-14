@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>类式继承</title>
+</head>
+<body>
+<div class="content">
+  <h3>什么是类式继承</h3>
+  <div class="detail">简单的说就是子类的prototype指向父类的实例。</div>
+</div>
+<script>
+  var SuperClass = function() {
+    this.bookList = ['CSS', 'HTML', 'JavaScript'];
+  };
+  SuperClass.prototype.getBookList = function() {
+    return this.bookList;
+  }
+
+  var ChildClass = function(bookType) {
+    this.bookType = bookType;
+  }
+
+  ChildClass.prototype = new SuperClass();
+
+  ChildClass.prototype.getBookType = function() {
+    return this.bookType;
+  }
+
+  // var ChildClass2 = function() {}
+  //
+  // ChildClass2.prototype = new SuperClass();
+  //
+  // console.log('ChildClass2:', new ChildClass2())
+
+  var instance1 = new ChildClass('js');
+  var instance2 = new ChildClass('css');
+
+  console.log('instance1:', instance1);
+  // instance1.bookList.push('设计模式');
+  instance1.bookList = '设计模式';
+  console.log('instance2:', instance2);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>树结构</title>
+</head>
+<body>
+1. insert(key) 插入一个元素 <br>
+2. search(key) 查找树中是否包含key元素，是返回true, 否返回false <br>
+3. inOrderTraverse() 中序遍历 <br>
+4. preOrderTraverse() 先序遍历 <br>
+5. postOrderTraverse() 后序遍历 <br>
+6. min() 查找最小值 <br>
+7. max() 查找最大值 <br>
+8. remove(key) 移除某个元素 <br>
+
+中序遍历：<br>
+以从小到大的顺序遍历所有节点。<br>
+先序遍历：<br>
+先遍历父节点，在遍历子节点。打印一个结构化的文档。<br>
+后序遍历：<br>
+先遍历子节点在遍历父节点。计算一个目录以及其子目录中所有文件占用的空间大小。<br>
+<script>
+  // 二叉搜索树
+  // 1. 节点对象
+  class Node {
+    constructor(key) {
+      this.key = key;
+      this.left = null;
+      this.right = null
+    }
+  }
+
+  const COMPARE = {
+    LESS_THAN: 'LESS_THAN',
+    EQUALITY: 'EQUALITY',
+    BIGGER_THAN: 'BIGGER_THAN'
+  }
+
+  // 2. 比较函数
+  function defaultCompareFn(a, b) {
+    if (a < b) {
+      return COMPARE.BIGGER_THAN;
+    }
+    else if (a > b) {
+      return COMPARE.LESS_THAN;
+    }
+    else {
+      return COMPARE.EQUALITY;
+    }
+  }
+
+  class BinarySearchTree {
+    constructor(compareFn = defaultCompareFn) {
+      this.root = null;
+      this.compareFn = compareFn;
+    }
+
+    insert(key) {
+      if (this.root === null) {
+        this.root = new Node(key);
+      }
+      else {
+        this.insertNode(this.root, key);
+      }
+    }
+
+    insertNode(node, key) {
+      if (this.compareFn(node.key, key) === COMPARE.LESS_THAN) {
+        if (node.left === null) {
+          node.left = new Node(key);
+        }
+        else {
+          this.insertNode(node.left, key);
+        }
+      }
+      else {
+        if (node.right === null) {
+          node.right = new Node(key);
+        }
+        else {
+          this.insertNode(node.right, key);
+        }
+      }
+    }
+
+    // 查找特定节点
+    search(key) {
+      return this.searchNode(this.root, key);
+    }
+
+    searchNode(node, key) {
+      if (node === null) return false;
+      const compareResult = this.compareFn(node.key, key);
+      if (compareResult === COMPARE.LESS_THAN) {
+        return this.searchNode(node.left, key);
+      }
+      else if (compareResult === COMPARE.BIGGER_THAN) {
+        return this.searchNode(node.right, key);
+      }
+      else {
+        return true;
+      }
+    }
+
+    // 查找最小值
+    min() {
+      return this.minNode(this.root);
+    }
+
+    minNode(node) {
+      let currentNode = node;
+      while (currentNode !== null && currentNode.left !== null) {
+        currentNode = currentNode.left;
+      }
+      return currentNode;
+    }
+
+    // 查找最大值
+    max() {
+      return this.maxNode(this.root);
+    }
+
+    maxNode(node) {
+      let currentNode = node;
+      while (currentNode !== null && currentNode.right !== null) {
+        currentNode = currentNode.right;
+      }
+      return currentNode;
+    }
+
+    // 中序遍历
+    inOrderTraverse(callback) {
+      this.inOrderTraverseNode(this.root, callback);
+    }
+
+    inOrderTraverseNode(node, callback) {
+      if (node !== null) {
+        this.inOrderTraverseNode(node.left, callback);
+        callback(node);
+        this.inOrderTraverseNode(node.right, callback);
+      }
+    }
+
+    preOrderTraverse(callback) {
+      this.preOrderTraverseNode(this.root, callback);
+    }
+    preOrderTraverseNode(node, callback) {
+      if (node !== null) {
+        callback(node);
+        this.preOrderTraverseNode(node.left, callback);
+        this.preOrderTraverseNode(node.right, callback);
+      }
+    }
+
+    // 后序遍历
+    postOrderTraverse(callback) {
+      this.postOrderTraverseNode(this.root, callback);
+    }
+
+    postOrderTraverseNode(node, callback) {
+      if (node !== null) {
+        this.preOrderTraverseNode(node.left, callback);
+        this.preOrderTraverseNode(node.right, callback);
+        callback(node);
+      }
+    }
+
+    remove(key) {
+      this.root = this.removeNode(this.root, key);
+    }
+
+    removeNode(node, key) {
+      if (node === null) return null;
+      const compareResult = this.compareFn(node.key, key);
+      if (compareResult === COMPARE.LESS_THAN) {
+        node.left = this.removeNode(node.left, key);
+        return node;
+      }
+      else if (compareResult === COMPARE.BIGGER_THAN) {
+        node.right = this.removeNode(node.right, key);
+        return node;
+      }
+
+      if (node.left === null && node.right === null) {
+        node = null;
+        return node;
+      }
+      if (node.left === null) {
+        node = node.right;
+        return node;
+      }
+      else if (node.right === null) {
+        node = node.left;
+        return node;
+      }
+
+      let aux = this.minNode(node.right);
+      node.key = aux.key;
+      node.right = this.removeNode(node.right, aux.key);
+      return node;
+    }
+
+  }
+
+  let bst = new BinarySearchTree()
+  bst.insert(10);
+  bst.insert(1);
+  bst.insert(2);
+  bst.insert(5);
+  bst.insert(9);
+  bst.remove(1);
+  console.log('bst:', bst.root);
+  console.log('min', bst.min().key);
+  console.log('max', bst.max().key);
+  bst.inOrderTraverse(function(node) {
+    console.log('key:', node.key);
+  })
+
+  function getNodeHeight(node) {
+    if (node === null) {
+      return -1;
+    }
+
+    return Math.max(getNodeHeight(node.left), getNodeHeight(node.right)) + 1;
+  }
+
+  const BALANCE_FACTOR = {
+    UNBALANCE_RIGHT: -2,
+    SLIGHTLY_UNBALANCE_RIGHT: -1,
+    BALANCE: 0,
+    SLIGHTLY_UNBALANCE_LEFT: 1,
+    UNBALANCE_LEFT: 2
+  }
+
+
+  class AVLTree extends BinarySearchTree {
+    constructor(compareFn = defaultCompareFn) {
+      super(compareFn);
+      this.root = null
+      this.compareFn = compareFn;
+    }
+    // 获取节点高度
+    getNodeHeight(node) {
+      if (node == null) {
+        return -1;
+      }
+
+      return Math.max(
+        this.getNodeHeight(node.left),
+        this.getNodeHeight(node.right)
+      ) + 1;
+    }
+
+
+    getBalanceFactor(node) {
+      if (node == null) return BALANCE_FACTOR.BALANCE;
+      const heightDifference = this.getNodeHeight(node.left) - this.getNodeHeight(node.right);
+
+      switch (heightDifference) {
+        case -2:
+          return BALANCE_FACTOR.UNBALANCE_RIGHT;
+        case -1:
+          return BALANCE_FACTOR.SLIGHTLY_UNBALANCE_RIGHT;
+        case 1:
+          return BALANCE_FACTOR.SLIGHTLY_UNBALANCE_LEFT;
+        case 2:
+          return BALANCE_FACTOR.UNBALANCE_LEFT;
+        default:
+          return BALANCE_FACTOR.BALANCE;
+      }
+    }
+
+    // LL型
+    rotateLL(node) {
+      let temp = node.left;
+      node.left = temp.right;
+      temp.right = node;
+      return temp;
+    }
+
+    // RR型
+    rotateRR(node) {
+      let temp = node.right;
+      node.right = temp.left;
+      temp.left = node;
+      return temp;
+    }
+
+    // LR型
+    rotateLR(node) {
+      node.left = this.rotateRR(node.left);
+      return this.rotateLL(node);
+    }
+
+    // RL型
+    rotateRL(node) {
+      node.right = this.rotateLL(node.right);
+      return this.rotateRR(node);
+    }
+
+    insert(key) {
+      this.root = this.insertNode(this.root, key);
+    }
+
+    insertNode(node, key) {
+      if (node === null) {
+        return new Node(key);
+      }
+
+      if (this.compareFn(node.key, key) === COMPARE.LESS_THAN) {
+        node.left = this.insertNode(node.left, key);
+      }
+      else if (this.compareFn(node.key, key) === COMPARE.BIGGER_THAN) {
+        node.right = this.insertNode(node.right, key);
+      }
+      else {
+        return node;
+      }
+
+      // 处理平衡问题
+      const factor = this.getBalanceFactor(node);
+      // 选择旋转类型
+      if (factor === BALANCE_FACTOR.UNBALANCE_LEFT) {
+        if (this.compareFn(node.left.key, key) === COMPARE.LESS_THAN) {
+          node = this.rotateLL(node);
+        }
+        else {
+          node = this.rotateLR(node);
+        }
+      }
+      else if (factor === BALANCE_FACTOR.UNBALANCE_RIGHT) {
+        if (this.compareFn(node.right.key, key) === COMPARE.BIGGER_THAN) {
+          node = this.rotateRR(node);
+        }
+        else {
+          node = this.rotateRL(node);
+        }
+      }
+
+      return node;
+    }
+
+    removeNode(node, key) {
+      node = super.removeNode(node, key);
+      if (node === null) return node;
+
+      // 处理平衡问题
+      const factor = this.getBalanceFactor(node);
+      if (factor === BALANCE_FACTOR.UNBALANCE_LEFT) {
+        const factorLeft = this.getBalanceFactor(node.left);
+        // LL型
+        if (
+          factorLeft === BALANCE_FACTOR.BALANCE ||
+          factorLeft === BALANCE_FACTOR.SLIGHTLY_UNBALANCE_LEFT
+        ) {
+          return this.rotateLL(node);
+        }
+        // LR型
+        else if (factorLeft === BALANCE_FACTOR.SLIGHTLY_UNBALANCE_RIGHT) {
+          return this.rotateLR(node);
+        }
+      }
+      else if (factor === BALANCE_FACTOR.UNBALANCE_RIGHT) {
+        const factorRight = this.getBalanceFactor(node.right);
+        // RR型
+        if (
+          factorRight === BALANCE_FACTOR.BALANCE ||
+          factorRight === BALANCE_FACTOR.SLIGHTLY_UNBALANCE_RIGHT
+        ) {
+          return this.rotateRR(node);
+        }
+        // RL型
+        else if (factorRight === BALANCE_FACTOR.SLIGHTLY_UNBALANCE_LEFT) {
+          return this.rotateRL(node);
+        }
+      }
+      return node;
+    }
+  }
+
+  let avl = new AVLTree();
+  avl.insert(10);
+  avl.insert(1);
+  avl.insert(4);
+  avl.insert(11);
+  avl.insert(5);
+  avl.insert(12);
+  avl.insert(6);
+  avl.insert(7);
+  avl.insert(8);
+
+  avl.remove(5);
+
+  console.log('avl:', avl.root);
+  console.log('nodeHeight:', avl.getBalanceFactor(avl.root));
+
+  const COLOR = {
+    RED: 'red',
+    BLACK: 'black'
+  };
+
+  class RedBlackNode extends Node {
+    constructor(key) {
+      super(key);
+      this.key = key;
+      this.color = COLOR.RED;
+      this.parent = null;
+    }
+
+    isRed(node) {
+      return node.color === COLOR.RED;
+    }
+  }
+
+  class RedBlackTree extends BinarySearchTree {
+    constructor(compareFn = defaultCompareFn) {
+      super(compareFn);
+      this.root = null;
+      this.compareFn = compareFn;
+    }
+
+    insert(key) {
+      if (this.root === null) {
+        this.root = new RedBlackNode(key);
+        this.root.color = COLOR.BLACK;
+      }
+      else {
+        let newNode = this.insertNode(this.root, key);
+        // 判断树是否满足红黑树条件
+        this.fixRedBlackTreeProperties(newNode);
+      }
+    }
+
+    insertNode(node, key) {
+      if (this.compareFn(node.key, key) === COMPARE.LESS_THAN) {
+        if (node.left === null) {
+          node.left = new RedBlackNode(key);
+          node.left.parent = node;
+          return node.left;
+        }
+        else {
+          return this.insertNode(node.left, key);
+        }
+      }
+      else if (node.right === null) {
+        node.right = new RedBlackNode(key);
+        node.right.parent = node;
+        return node.right;
+      }
+      else {
+        return this.insertNode(node.right, key);
+      }
+    }
+
+    fixRedBlackTreeProperties(node) {
+
+    }
+  }
+
+  const data = {
+    examineNum: "贷款编号",
+    contractNum: "借款合同编号",
+    examineStatus: "审批进度状态-数字",
+    lnAmt: "贷款金额",
+    lnTerm: "贷款期限，数字，几个月",
+    lnRate: "贷款利率 数字",
+    repayMode: "还款方式 数字",
+    lnBal: "贷款余额 数字",
+    lnStatus: "贷款状态 数字",
+    contractCode: "合同代码",
+
+  }
+</script>
+</body>
+</html>

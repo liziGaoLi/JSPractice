@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>策略模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>策略模式</h3>
+  <div class="detail">
+    就是将一系列的算法单独封装到一个策略对象中，使算法能够替换使用。<br>
+    目的是实现算法的使用和算法的实现相分离。
+  </div>
+</div>
+<script>
+  // 面向对象的方式实现
+  function PerformanceA() {}
+  PerformanceA.prototype.calculate = function(salary) {
+    return salary * 4;
+  }
+
+  function PerformanceB() {}
+  PerformanceB.prototype.calculate = function(salary) {
+    return salary * 2;
+  }
+
+  function PerformanceC() {}
+  PerformanceC.prototype.calculate = function(salary) {
+    return salary * 1;
+  }
+
+  function Bonus() {
+    this.salary = null;
+    this.strategy = null;
+  }
+
+  Bonus.prototype.setSalary = function(salary) {
+    this.salary = salary;
+  }
+
+  Bonus.prototype.setStrategy = function(strategy) {
+    this.strategy = strategy;
+  }
+
+  Bonus.prototype.getBonus = function() {
+    return this.strategy.calculate(this.salary);
+  }
+
+  var bonus = new Bonus();
+  bonus.setSalary(1000);
+  bonus.setStrategy(new PerformanceA());
+  // 4000;
+  console.log('performanceA:', bonus.getBonus());
+  bonus.setStrategy(new PerformanceB());
+  // 2000
+  console.log('performanceB:', bonus.getBonus());
+
+  // 对象字面量方式
+  var performance = {
+    A: function(salary) {
+      return salary * 4;
+    },
+    B: function(salary) {
+      return salary * 2;
+    },
+    C: function(salary) {
+      return salary;
+    }
+  };
+
+  var getBonus = function(level, salary) {
+    return performance[level](salary);
+  }
+
+  console.log('A:', getBonus('A', 2000));  // 8000
+  console.log('B:', getBonus('B', 2000));  // 4000
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>原型式继承</title>
+</head>
+<body>
+<div class="content">
+  <h3>原型式继承</h3>
+  <div class="detail">本质上是对类式继承方式的封装，并没有解决类式继承的缺点</div>
+</div>
+<script>
+  var SuperClass = {
+    bookList: ['html', 'css', 'js'],
+    getBookList: function() {
+      return this.bookList;
+    }
+  };
+
+  var inheritObject = function(superObject) {
+    var Fn = function(){};
+    Fn.prototype = superObject;
+    return new Fn();
+  }
+
+  var createObject = function(superObject, bookType) {
+    var obj = inheritObject(superObject);
+    obj.bookType = bookType;
+    obj.getBookType = function () {
+      return this.bookType;
+    }
+    return obj;
+  }
+
+  var instance = createObject(SuperClass, '前端');
+  var bookType = instance.getBookType();
+  console.log('instance:', instance);
+  console.log('bookType:', bookType);
+
+
+
+</script>
+</body>
+</html>

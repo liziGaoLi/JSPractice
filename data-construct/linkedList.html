@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>单向链表</title>
+</head>
+<body>
+<div class="content">
+  1. push(element) 向链表后端添加元素 <br>
+  2. insert(element, position) 向某个位置插入元素 <br>
+  3. getElementAt(index) 获取某个位置的元素 <br>
+  4. remove(element) 从链表中移除元素 <br>
+  5. indexOf(element) 获取元素的位置索引 <br>
+  6. removeAt(index) 移除某个位置上的元素 <br>
+  7. size() 获取元素个数 <br>
+  8. isEmpty() 链表是否为空 <br>
+</div>
+<script>
+  // 节点对象
+  class Node {
+    constructor(element) {
+      this.element = element;
+      this.next = null;
+    }
+  }
+
+  // 默认判断节点是否相等的函数
+  const defaultEqualFn = (a, b) => {
+    return a === b;
+  }
+
+  class LinkedList {
+    constructor(equalFn = defaultEqualFn) {
+      this.head = null;
+      this.count = 0;
+      this.equalFn = equalFn;
+    }
+
+    // 添加在末端元素
+    push(element) {
+      let node = new Node(element);
+      if (this.head === null) {
+        this.head = node;
+      }
+      else {
+        let currentNode = this.head;
+        while (currentNode.next !== null) {
+          currentNode = currentNode.next;
+        }
+        currentNode.next = node;
+      }
+      this.count++;
+    }
+
+    // 移除某个位置的元素
+    removeAt(index) {
+      if (index >= 0 && index < this.count) {
+        var currentNode = this.head;
+        if (index === 0) {
+          this.head = currentNode.next;
+        }
+        else {
+          let previous;
+          for(let i = 0; i < index; i++) {
+            previous = currentNode;
+            currentNode = currentNode.next;
+          }
+          previous.next = currentNode.next;
+        }
+
+        this.count--;
+        return currentNode;
+      }
+      return undefined
+    }
+
+    remove(element) {
+      if (this.isEmpty()) return undefined;
+
+      let currentNode = this.head;
+      let previous = this.head;
+
+      while (!this.equalFn(element, currentNode.element)) {
+        previous = currentNode;
+        currentNode = currentNode.next;
+      }
+      previous.next = currentNode.next;
+      this.count--;
+      return currentNode;
+    }
+
+    // 获取某个位置上的元素
+    getElementAt(index) {
+      if (index >= 0 && index < this.count) {
+        let currentNode = this.head;
+        for (let i = 0; i < index; i++) {
+          currentNode = currentNode.next;
+        }
+        return currentNode;
+      }
+
+      return undefined;
+    }
+
+    // 获取某个元素的索引
+    indexOf(element) {
+      if (this.isEmpty()) return -1;
+
+      let currentNode = this.head;
+      let i = 0;
+      while (currentNode && !this.equalFn(element, currentNode.element)) {
+        currentNode = currentNode.next;
+        i++;
+      }
+      if (!currentNode) {
+        return -1;
+      }
+      return i;
+    }
+
+    // 在某个位置插入元素
+    insert(element, position) {
+      if (position >= 0 && position <= this.count) {
+        let node = new Node(element);
+        let currentNode = this.head;
+        let previous = this.head;
+        for (let i = 0; i < position; i++) {
+          previous = currentNode;
+          currentNode = currentNode.next;
+        }
+        previous.next = node;
+        node.next = currentNode;
+        this.count++;
+        return true;
+      }
+      return false;
+    }
+
+    size() {
+      return this.count;
+    }
+
+    isEmpty() {
+      return this.size() === 0;
+    }
+
+    toString() {
+      if (this.isEmpty()) return '';
+      let currentElementStr = this.head.element;
+      let currentNode = this.head;
+
+      while (currentNode.next !== null) {
+        currentNode = currentNode.next;
+        currentElementStr = `${currentElementStr}, ${currentNode.element}`
+      }
+      return currentElementStr;
+    }
+  }
+
+  let linkedList = new LinkedList();
+
+  linkedList.push('Alice');
+  linkedList.push('Bob');
+  linkedList.insert('Jack', 1);
+  linkedList.insert('Vivian', 2);
+  linkedList.remove('Bob');
+  linkedList.removeAt('2');
+  console.log('getElementAt', linkedList.getElementAt(1).element);
+  console.log('indexOf', linkedList.indexOf('Jack'))
+  console.log(linkedList.toString());
+  console.log('isEmpty', linkedList.isEmpty());
+  console.log('size:', linkedList.size())
+
+  // 双向链表
+  class DoubleNode extends Node {
+    constructor(element) {
+      super(element);
+      this.prev = null;
+    }
+  }
+
+  class DoubleLinkedList extends LinkedList {
+    constructor(equalFn = defaultEqualFn) {
+      super(equalFn);
+      this.tail = null;
+    }
+
+    push(element) {
+      const node = new DoubleNode(element);
+
+      if (this.isEmpty()) {
+        this.head = node;
+      }
+      else {
+        let currentNode = this.head;
+        while (currentNode.next !== null) {
+          currentNode = currentNode.next;
+        }
+        node.prev = currentNode;
+        currentNode.next = node;
+      }
+      this.tail = node;
+      this.count++;
+    }
+
+    insert(element, position) {
+      if (position >= 0 && position <= this.count) {
+        const node = new DoubleNode(element);
+        let currentNode = this.getElementAt(position);
+
+        if (currentNode === undefined) {
+          this.push(element);
+        }
+        else if (currentNode.prev === null) {
+          this.head.prev = node;
+          node.next = this.head;
+          this.head = node;
+        }
+        else {
+          let prevNode = currentNode.prev;
+          prevNode.next = node;
+          currentNode.prev = node;
+          node.prev = prevNode;
+          node.next = currentNode;
+        }
+        this.count++;
+      }
+    }
+
+    removeAt(index) {
+      if (index >= 0 && index < this.count) {
+        const currentNode = this.getElementAt(index);
+        if (currentNode.prev === null) {
+          this.head = currentNode.next;
+          this.head.prev = null;
+        }
+        else if (currentNode.next === null) {
+          this.tail = currentNode.prev;
+          this.tail.next = null;
+        }
+        else {
+          const prevNode = currentNode.prev;
+          const nextNode = currentNode.next;
+          prevNode.next = nextNode;
+          nextNode.prev = prevNode;
+        }
+        this.count--;
+        return currentNode;
+      }
+      return undefined;
+    }
+
+    remove(element) {
+
+      const index = this.indexOf(element);
+      if (index === -1) return undefined;
+      return this.removeAt(index);
+    }
+  }
+
+  console.log('--------------------------DoubleLinkedList---------------------------');
+
+  let doubleLinkedList = new DoubleLinkedList();
+
+  doubleLinkedList.push('Alice');
+  doubleLinkedList.push('Bob');
+  doubleLinkedList.insert('Jack', 1);
+  doubleLinkedList.insert('Vivian', 2);
+  doubleLinkedList.remove('Bob');
+  doubleLinkedList.removeAt('2');
+  console.log('getElementAt', doubleLinkedList.getElementAt(1).element);
+  console.log('indexOf', doubleLinkedList.indexOf('Jack'))
+  console.log(doubleLinkedList.toString());
+  console.log('isEmpty', doubleLinkedList.isEmpty());
+  console.log('size:', doubleLinkedList.size());
+
+  class CircularLinkedList extends LinkedList {
+    constructor(equalFn = defaultEqualFn) {
+      super(equalFn);
+    }
+
+    push(element) {
+      const node = new Node(element);
+      if (this.isEmpty()) {
+        this.head = node;
+        this.head.next = this.head;
+      }
+      else {
+        let currentNode = this.head;
+        for (let i = 1; i < this.count - 1; i++) {
+          currentNode = currentNode.next;
+        }
+        node.next = this.head;
+        currentNode.next = node;
+      }
+      this.count++;
+    }
+
+    insert(element, position) {
+      if (position < 0 || position > this.count) return false;
+
+      const node = new Node(element);
+      if (position === 0) {
+        let currentNode = this.head;
+        for (let i = 1; i < this.count - 1; i++) {
+          currentNode = currentNode.next;
+        }
+        currentNode.next = node;
+        node.next = this.head;
+        this.head = node;
+        this.count++;
+      }
+      else if (position === this.count) {
+        this.push(element);
+      }
+      else {
+        super.insert(element, position);
+      }
+
+    }
+
+    removeAt(index) {
+      if (index < 0 || index >= this.count) return undefined;
+      let result = undefined;
+      if (this.count === 1) {
+        result = this.head;
+        this.head = null;
+        this.count--;
+      }
+      else if (index === 0) {
+        result = this.head;
+        const tailNode = this.getElementAt(this.count - 1);
+        this.head = this.head.next;
+        tailNode.next = this.head;
+        this.count--;
+      }
+      else if (index === this.count - 1) {
+        const tailNode = this.getElementAt(this.count - 2);
+        tailNode.next = this.head;
+        this.count--;
+      }
+      else {
+        result = super.removeAt(index);
+      }
+
+      return result;
+    }
+
+    remove(element) {
+
+      const index = this.indexOf(element);
+      if (index === -1) return undefined;
+      return this.removeAt(index);
+    }
+
+    toString() {
+      if (this.isEmpty()) return '';
+      let currentElementStr = this.head.element;
+      let currentNode = this.head;
+      let i = 0;
+      console.log('this.head', this.head);
+      while (this.count - 1 > i) {
+        currentNode = currentNode.next;
+        currentElementStr = `${currentElementStr}, ${currentNode.element}`;
+        i++;
+      }
+      return currentElementStr;
+    }
+  }
+
+  console.log('********************************CircularLinkedList***********************************')
+
+  let circularLinkedList = new CircularLinkedList();
+
+  circularLinkedList.push('Alice');
+  circularLinkedList.push('Bob');
+  circularLinkedList.insert('Jack', 1);
+  circularLinkedList.insert('Vivian', 2);
+  circularLinkedList.remove('Bob');
+  circularLinkedList.removeAt('2');
+  console.log(circularLinkedList.toString());
+  console.log('getElementAt', circularLinkedList.getElementAt(2).element);
+  console.log('indexOf', circularLinkedList.indexOf('Jack'))
+  console.log('isEmpty', circularLinkedList.isEmpty());
+  console.log('size:', circularLinkedList.size());
+</script>
+</body>
+</html>

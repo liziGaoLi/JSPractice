@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>贪心算法</title>
+</head>
+<body>
+<script>
+  function minCoinChange(coins, amount) {
+    const cache = [];
+    let total = 0;
+    for (let i = coins.length - 1; i >= 0; i--) {
+      const coin = coins[i];
+      while (total + coin <= amount) {
+        cache.push(coin);
+        total += coin;
+      }
+    }
+    return cache;
+  }
+  console.log('minCoinChange', minCoinChange([1, 3, 4], 6));
+
+  function snapStack(capacity, weights, values) {
+    // 背包剩余的空间
+    let load = 0;
+    // 已经装入背包的重量
+    let val = 0;
+    for (let i = 0; i < values.length && load < capacity; i++) {
+      if (weights[i] + load <= capacity) {
+        load += weights[i];
+        val += values[i];
+      }
+      else {
+        const percentage = (capacity - load) / capacity;
+        load += percentage * weights[i];
+        val += percentage * values[i];
+      }
+    }
+    return val;
+  }
+  console.log('snapStack', snapStack(5, [1, 2, 3], [2, 3, 4], 3))
+</script>
+</body>
+</html>

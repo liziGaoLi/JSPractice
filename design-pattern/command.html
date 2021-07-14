@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>命令模式</title>
+</head>
+<body>
+<div class="content">
+  <h3>命令模式：</h3>
+  <div class="detail">
+    命令发布对象通过触发命令来触发命令接受对象上的命令。<br>
+    实现发布对象和接受对象之间的解耦。
+  </div>
+</div>
+
+<script>
+  // 命令接受对象
+  var Editor = function() {
+    // 当前值
+    this.content = '';
+    // 历史记录
+    this.history = [];
+    // 栈中的指针
+    this.historyPosition = -1;
+  }
+
+  Editor.prototype = {
+    constructor: Editor,
+
+    // 编辑命令
+    edit: function(content) {
+      this.content = this.content + content + '';
+      if (this.historyPosition < this.history.length - 1) {
+        this.history = this.history.slice(0, this.historyPosition + 1);
+      }
+      this.history.push(this.content);
+      this.historyPosition++;
+      console.log('edit content:', this.content);
+    },
+
+    // 撤回
+    undo: function() {
+      if (this.canUndo()) {
+        this.historyPosition--;
+        this.content = this.history[this.historyPosition];
+        console.log('undo content:', this.content);
+      }
+    },
+
+    // 重做
+    redo: function() {
+      if (this.canRedo()) {
+        this.historyPosition++;
+        this.content = this.history[this.historyPosition];
+        console.log('redo content:', this.content);
+      }
+    },
+
+    // 是否可以撤回
+    canUndo: function() {
+      return this.history.length > 1 && this.historyPosition > 0;
+    },
+
+    // 是否可以重做
+    canRedo: function() {
+      return this.history.length > 1 && this.historyPosition < this.history.length - 1;
+    }
+  }
+
+  // 命令触发对象
+  var CommandTrigger = function(editor) {
+    this.editor = editor;
+    this.edit = function(content) {
+      this.editor.edit(content);
+    };
+    this.undo = function() {
+      this.editor.undo();
+    }
+    this.redo = function() {
+      this.editor.redo();
+    }
+  }
+
+  var commandTrigger = new CommandTrigger(new Editor());
+  commandTrigger.edit('Hello ');
+  commandTrigger.edit('World!');
+  commandTrigger.undo();
+  commandTrigger.edit('World!!!');
+  commandTrigger.undo();
+  commandTrigger.redo();
+</script>
+
+</body>
+</html>
